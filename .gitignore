@@ -73,3 +73,14 @@ RNTester/build
 # CocoaPods
 /template/ios/Pods/
 /template/ios/Podfile.lock
+
+
+
+
+node_modules/**/*
+.expo/*
+npm-debug.*
+*.jks
+*.p12
+*.key
+*.mobileprovision
