@@ -195,7 +195,7 @@ export default class App extends React.Component {
 
     async playSong(uri) {
       return await fetch("https://api.spotify.com/v1/me/player/play", {
-        method: "POST" ,
+        method: "PUT" ,
         headers: {
           'Authorization': 'Bearer ' + this.userData.accessToken
         },
