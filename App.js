@@ -7,8 +7,13 @@ export default class App extends React.Component {
     credentials = require('./secrets.js');
 
     scopes = '';
-
-    tolerance =3
+    hit = true;
+    //how many bmp readings we average together
+    bmpResistance = 3
+    bmpArr = []
+    //tolernce of accelerometer data to prevent false hits
+    tolerance = 3.14159265358979
+    //the range +- that an acceptible song is in
     bmpTolerance = 5
     url = 'https://api.spotify.com/v1/recommendations'
     auth_url = 'https://accounts.spotify.com/authorize'
@@ -20,13 +25,18 @@ export default class App extends React.Component {
         accelerometerData: {},
         bpm: 0,
         hits: 0,
-        accessTokenAvailable: false
+        accessTokenAvailable: false,
+        userPreferences: 'acoustic,afrobeat,alt-rock,alternative,ambient'
     };
     // Temperary dummy object for storing session data
     userData = {
         accessToken: '',
         refreshToken: '',
         expirationTime: ''
+    }
+
+    setUserPreferences(genres) {
+        this.setState({ userPreferences: genres })
     }
 
     /*
@@ -107,7 +117,20 @@ export default class App extends React.Component {
         con = this
         this._subscribe();
         this._interval = setInterval(() => {
-            con.setState({ bpm: con.state.hits * 12 })
+            if (con.bmpArr.length == con.bmpResistance) {
+                con.bmpArr.shift()
+                con.bmpArr.push(con.state.hits * 12)
+            }
+            else {
+                con.bmpArr.push(con.state.hits * 12)
+            }
+            let ammt = Math.min(con.bmpArr.length, con.bmpResistance)
+            let avg = 0
+            for (i = 0; i < ammt; i++) {
+                avg += con.bmpArr[i]
+            }
+            avg = avg / ammt
+            con.setState({ bmp: avg })
             con.setState({ hits: 0 })
         }, 5000);
         const tokenExpirationTime = this.userData.expirationTime
@@ -138,8 +161,6 @@ export default class App extends React.Component {
     };
 
     calculateHit() {
-        hit = true;
-
         let {
             x,
             y,
@@ -148,33 +169,29 @@ export default class App extends React.Component {
 
         if (Math.sqrt((x * x) + (y * y) + (z * z)) > this.tolerance && hit) {
             this.setState({ hits: this.state.hits + 1 });
-            hit = false;
+            this.hit = false;
         }
         if (Math.sqrt((x * x) + (y * y) + (z * z)) < this.tolerance && !hit) {
-            hit = true;
+            this.hit = true;
         }
     }
 
     async getSpotifyRecomendations() {
-
-    let full_url = this.url + 
-                  '?seed_genres=world-music' +
-                  '&min_tempo=' + (Math.max((this.state.bpm - this.bpmTolerance), 0)) +
-                  '&max_tempo=' + (this.state.bpm + this.bpmTolerance) +
-                  '&target_danceability=0.8' +
-                  '&market=US';
-
-    console.log(full_url)
-
-    return await fetch(full_url, {
-          method: "GET",
-          headers: {
-              'Authorization': 'Bearer '+this.userData.accessToken
-          }
-      }).then(async (res) => {
-          return await res.json()
-      })
-  }
+        return await fetch(this.url +
+            '?seed_genres=' + this.state.userPreferences +
+            '&min_tempo=' + (Math.max((this.state.bpm - this.bmpTolerance), 0)) +
+            '&max_tempo=' + (this.state.bpm + this.bmpTolerance) +
+            '&target_danceability=0.8' +
+            '&market=US',
+            {
+                method: "GET",
+                headers: {
+                    'Authorization': 'Bearer ' + this.userData.accessToken
+                }
+            }).then(async (res) => {
+                return await res.json()
+            })
+    }
 
     render() {
         let bpm = this.state.bpm
