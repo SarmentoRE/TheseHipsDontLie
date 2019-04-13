@@ -34,8 +34,8 @@ import expolib_v1.okhttp3.OkHttpClient;
 
 // Needed for `react-native link`
 // import com.facebook.react.ReactApplication;
-import com.lufinkey.react.spotify.RNSpotifyPackage;
 import com.lufinkey.react.eventemitter.RNEventEmitterPackage;
+import com.lufinkey.react.spotify.RNSpotifyPackage;
 
 public class MainApplication extends ExpoApplication implements AppLoaderPackagesProviderInterface<ReactPackage> {
 

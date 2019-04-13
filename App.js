@@ -7,12 +7,11 @@ export default class App extends React.Component {
     credentials = require('./secrets.js');
 
     scopes = '';
-    hit = true;
     //how many bmp readings we average together
     bmpResistance = 3
     bmpArr = []
     //tolernce of accelerometer data to prevent false hits
-    tolerance = 3.14159265358979
+    tolerance = 1.7
     //the range +- that an acceptible song is in
     bmpTolerance = 5
     url = 'https://api.spotify.com/v1/recommendations'
@@ -124,13 +123,13 @@ export default class App extends React.Component {
             else {
                 con.bmpArr.push(con.state.hits * 12)
             }
-            let ammt = Math.min(con.bmpArr.length, con.bmpResistance)
-            let avg = 0
+            ammt = Math.min(con.bmpArr.length, con.bmpResistance)
+            avg = 0
             for (i = 0; i < ammt; i++) {
                 avg += con.bmpArr[i]
             }
             avg = avg / ammt
-            con.setState({ bmp: avg })
+            con.setState({ bpm: avg })
             con.setState({ hits: 0 })
         }, 5000);
         const tokenExpirationTime = this.userData.expirationTime
@@ -167,12 +166,8 @@ export default class App extends React.Component {
             z,
         } = this.state.accelerometerData;
 
-        if (Math.sqrt((x * x) + (y * y) + (z * z)) > this.tolerance && hit) {
+        if (Math.sqrt((x * x) + (y * y) + (z * z)) > this.tolerance) {
             this.setState({ hits: this.state.hits + 1 });
-            this.hit = false;
-        }
-        if (Math.sqrt((x * x) + (y * y) + (z * z)) < this.tolerance && !hit) {
-            this.hit = true;
         }
     }
 
