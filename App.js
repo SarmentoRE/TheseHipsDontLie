@@ -7,6 +7,7 @@ export default class App extends React.Component {
     credentials = require('./secrets.js');
 
     scopes = '';
+    hit = true;
     //how many bmp readings we average together
     bmpResistance = 3
     bmpArr = []
@@ -160,8 +161,6 @@ export default class App extends React.Component {
     };
 
     calculateHit() {
-        hit = true;
-
         let {
             x,
             y,
@@ -170,10 +169,10 @@ export default class App extends React.Component {
 
         if (Math.sqrt((x * x) + (y * y) + (z * z)) > this.tolerance && hit) {
             this.setState({ hits: this.state.hits + 1 });
-            hit = false;
+            this.hit = false;
         }
         if (Math.sqrt((x * x) + (y * y) + (z * z)) < this.tolerance && !hit) {
-            hit = true;
+            this.hit = true;
         }
     }
 
