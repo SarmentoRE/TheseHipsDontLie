@@ -85,3 +85,5 @@ npm-debug.*
 *.key
 *.mobileprovision
 secrets.js
+codealike.json
+!android/

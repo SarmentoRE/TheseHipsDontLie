@@ -8,7 +8,7 @@ export default class App extends React.Component {
 
     scopes = '';
 
-    tolerance = 4
+    tolerance =3
     bmpTolerance = 5
     url = 'https://api.spotify.com/v1/recommendations'
     auth_url = 'https://accounts.spotify.com/authorize'
