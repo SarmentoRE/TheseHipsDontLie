@@ -156,28 +156,25 @@ export default class App extends React.Component {
     }
 
     async getSpotifyRecomendations() {
-        console.log(this.url +
-            '?seed_genres=world-music'+
-            '&min_tempo=' + (Math.max((this.state.bpm - this.bmpTolerance), 0)) +
-            '&max_tempo=' + (this.state.bpm + this.bmpTolerance) +
-            '&target_danceability=0.8' +
-            '&market=US')
 
-        return await fetch(this.url +
-            '?seed_genres=acoustic,afrobeat,alt-rock,alternative,ambient'+
-            '&min_tempo=' + (Math.max((this.state.bpm - this.bmpTolerance), 0)) +
-            '&max_tempo=' + (this.state.bpm + this.bmpTolerance) +
-            '&target_danceability=0.8' +
-            '&market=US', 
-            {
-                method: "GET",
-                headers: {
-                    'Authorization': 'Bearer '+this.userData.accessToken
-                }
-            }).then(async (res) => {
-                return await res.json()
-            })
-    }
+    let full_url = this.url + 
+                  '?seed_genres=world-music' +
+                  '&min_tempo=' + (Math.max((this.state.bpm - this.bpmTolerance), 0)) +
+                  '&max_tempo=' + (this.state.bpm + this.bpmTolerance) +
+                  '&target_danceability=0.8' +
+                  '&market=US';
+
+    console.log(full_url)
+
+    return await fetch(full_url, {
+          method: "GET",
+          headers: {
+              'Authorization': 'Bearer '+this.userData.accessToken
+          }
+      }).then(async (res) => {
+          return await res.json()
+      })
+  }
 
     render() {
         let bpm = this.state.bpm
